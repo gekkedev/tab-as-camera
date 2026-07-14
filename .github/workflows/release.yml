@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -14,16 +14,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Set release tag
+        id: release
+        run: echo "tag=build-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Package extension
-        shell: pwsh
         run: |
-          $tag = "${{ github.ref_name }}"
-          New-Item -ItemType Directory -Path dist
-          Compress-Archive `
-            -Path manifest.json,background.js,popup.html,popup.js,README.md,LICENSE `
-            -DestinationPath "dist/tab-as-camera-$tag.zip"
+          mkdir -p dist
+          zip -r "dist/tab-as-camera-${{ steps.release.outputs.tag }}.zip" \
+            manifest.json background.js popup.html popup.js README.md LICENSE
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" "dist/tab-as-camera-${{ github.ref_name }}.zip" --title "${{ github.ref_name }}" --notes "Release ${{ github.ref_name }}"
+        run: |
+          gh release create "${{ steps.release.outputs.tag }}" \
+            "dist/tab-as-camera-${{ steps.release.outputs.tag }}.zip" \
+            --target "$GITHUB_SHA" \
+            --title "${{ steps.release.outputs.tag }}" \
+            --notes "Automated release for $GITHUB_SHA"
