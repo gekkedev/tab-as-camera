@@ -31,3 +31,13 @@ The extension contains no fetch, WebSocket, analytics, external scripts, remote-
 - Reloading or navigating the target tab removes the override.
 - Navigating or closing the source tab ends capture.
 - Chrome 116 or newer is required.
+
+## Troubleshooting
+
+### The site still uses my normal camera
+
+The extension only replaces `getUserMedia()` calls made after you enable it in
+the target tab. It cannot replace a camera stream the site already opened.
+Turn the site's camera off and back on, or reload the target page, enable the
+extension, then start the site's camera. Reloading after enabling disables the
+override, so reload before enabling it.
