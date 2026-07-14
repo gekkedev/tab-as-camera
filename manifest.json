@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Tab as Camera",
+  "version": "1.0.0",
+  "description": "Use one Chrome tab as the camera stream in another tab. All processing stays local.",
+  "minimum_chrome_version": "116",
+  "permissions": ["activeTab", "scripting", "storage", "tabCapture"],
+  "action": { "default_title": "Tab as Camera", "default_popup": "popup.html" },
+  "background": { "service_worker": "background.js" }
+}
