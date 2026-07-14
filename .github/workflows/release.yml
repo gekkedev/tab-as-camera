@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Package extension
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          New-Item -ItemType Directory -Path dist
+          Compress-Archive `
+            -Path manifest.json,background.js,popup.html,popup.js,README.md,LICENSE `
+            -DestinationPath "dist/tab-as-camera-$tag.zip"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" "dist/tab-as-camera-${{ github.ref_name }}.zip" --title "${{ github.ref_name }}" --notes "Release ${{ github.ref_name }}"
