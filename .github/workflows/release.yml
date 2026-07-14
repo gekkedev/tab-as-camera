@@ -14,9 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set release tag
+      - name: Set release metadata
         id: release
-        run: echo "tag=build-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "tag=build-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "subject=$(git log -1 --pretty=%s)" >> "$GITHUB_OUTPUT"
 
       - name: Package extension
         run: |
@@ -32,4 +34,6 @@ jobs:
             "dist/tab-as-camera-${{ steps.release.outputs.tag }}.zip" \
             --target "$GITHUB_SHA" \
             --title "${{ steps.release.outputs.tag }}" \
-            --notes "Automated release for $GITHUB_SHA"
+            --notes "${{ steps.release.outputs.subject }}
+
+          Commit: $GITHUB_SHA"
