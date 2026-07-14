@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir -p dist
           zip -r "dist/tab-as-camera-${{ steps.release.outputs.tag }}.zip" \
-            manifest.json background.js popup.html popup.js README.md LICENSE
+            manifest.json background.js popup.html popup.js README.md LICENSE icons/icon-*.png
 
       - name: Create GitHub release
         env:
